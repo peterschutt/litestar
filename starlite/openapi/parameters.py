@@ -90,7 +90,9 @@ def create_parameters(
             header_key = extra.get("header")
             cookie_key = extra.get("cookie")
             query_key = extra.get("query")
-            if f_name in path_parameter_names:
+            path_key = extra.get("path")
+            if f_name in path_parameter_names or path_key in path_parameter_names:
+                f_name = path_key or f_name
                 param_in = "path"
                 required = True
                 schema = create_path_parameter_schema(
@@ -98,6 +100,9 @@ def create_parameters(
                     field=field,
                     generate_examples=generate_examples,
                 )
+            elif path_key:
+                # unused path variable
+                continue
             elif header_key:
                 f_name = header_key
                 param_in = "header"

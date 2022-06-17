@@ -13,6 +13,7 @@ def Parameter(
     header: Optional[str] = None,
     cookie: Optional[str] = None,
     query: Optional[str] = None,
+    path: Optional[str] = None,
     examples: Optional[List[Example]] = None,
     external_docs: Optional[ExternalDocumentation] = None,
     content_encoding: Optional[str] = None,
@@ -40,6 +41,7 @@ def Parameter(
     extra.update(header=header)
     extra.update(cookie=cookie)
     extra.update(query=query)
+    extra.update(path=path)
     extra.update(required=required)
     extra.update(examples=examples)
     extra.update(external_docs=external_docs)
