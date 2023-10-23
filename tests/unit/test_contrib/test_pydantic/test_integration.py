@@ -1,6 +1,6 @@
 from typing import Any, Dict, List
 
-from pydantic import VERSION, BaseModel, EmailStr, Field
+from pydantic import VERSION, BaseModel, DirectoryPath, EmailStr, Field, Json
 
 from litestar import post
 from litestar.contrib.pydantic.pydantic_dto_factory import PydanticDTO
@@ -128,9 +128,13 @@ def test_signature_model_invalid_input() -> None:
             ]
 
 
-def test_pydantic_correct_emailstr_succeeds() -> None:
+def test_pydantic_down_typing() -> None:
     class EmailModel(BaseModel):
         email: EmailStr
+        data_any: Json
+        data_obj: Json[Dict[str, Any]]
+        data_arr: Json[List[str]]
+        path: DirectoryPath
 
     EmailDTO = PydanticDTO[EmailModel]
 
@@ -139,5 +143,14 @@ def test_pydantic_correct_emailstr_succeeds() -> None:
         return data
 
     with create_test_client(route_handlers=handler) as client:
-        response = client.post("/email", json={"email": "foo@bar.com"})
+        response = client.post(
+            "/email",
+            json={
+                "email": "foo@bar.com",
+                "data_any": "null",
+                "data_obj": '{"a":1}',
+                "data_arr": '["a","b"]',
+                "path": ".",
+            },
+        )
         assert response.status_code == 201
